@@ -169,7 +169,6 @@ function draw() {
         drawTriangle()
         drawBooms()
         if (levelFinished) {
-            console.log("robie to");
 
 
             if (rockety > 0 && time % 4 == 0) {
@@ -179,9 +178,10 @@ function draw() {
                 rockety--
             }
 
-            if (cities[cityN].alive) {
+            if (cities[cityN].alive && !cities[cityN].survived) {
                 cities[cityN].survived = true
                 addPoints(100)
+
             }
             if (time % 20 == 0 && cityN < cities.length - 1) {
                 cityN++
