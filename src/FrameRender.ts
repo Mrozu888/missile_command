@@ -136,11 +136,6 @@ export function destroySilo() {
 }
 export let levelFinished: boolean = false
 let lastRockets: Array<number> = []
-function drawLastRockets() {
-    lastRockets.forEach(element => {
-        drawRocketSil(element, 304)
-    });
-}
 let drawMul: boolean = false
 let finishTime: number
 let cityN = 0
@@ -174,13 +169,11 @@ function draw() {
             if (rockety > 0 && time % 4 == 0) {
                 lastRockets.push(rocketsX)
                 rocketsX += 4 * pixelSize
-                addPoints(5)
+
                 rockety--
             }
-
             if (cities[cityN].alive && !cities[cityN].survived) {
                 cities[cityN].survived = true
-                addPoints(100)
 
             }
             if (time % 20 == 0 && cityN < cities.length - 1) {
@@ -224,6 +217,10 @@ function finishLevel() {
             rocketsX = 104
             cityN = 0
             levelFinished = true
+            addPoints(5 * rockety)
+            cities.forEach(element => {
+                if (element.alive) addPoints(100)
+            });
             setTimeout(() => {
                 let colors = worldColors[Math.floor(Math.random() * worldColors.length)]
                 cityColor = colors.cityColor
