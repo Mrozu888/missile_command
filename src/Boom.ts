@@ -1,11 +1,13 @@
 import { angleFromStartToTarget, distnceFromStartToTarget } from './DefaultFunctions';
-import { ctx, canvas, pixelSize, missiles, planes, triangles, triangleSpeed, UFOs } from './FrameRender';
+import { ctx, canvas, pixelSize, missiles, planes, triangles, triangleSpeed, UFOs, time, volume } from './FrameRender';
 import { boom } from './Interfaces';
 import { addPoints } from './Scoreboard';
 
 
 export let booms: Array<boom> = []
-
+export function clearBooms() {
+    booms = []
+}
 export function generateUserBoom(x: number, y: number) {
     // radius = 9
     let boom: boom = {
@@ -19,6 +21,10 @@ export function generateUserBoom(x: number, y: number) {
 
     }
     booms.push(boom)
+    var song = new Audio();
+    song.src = '../data/soundBoom.mp3';
+    song.volume = volume ? 0.5 : 0
+    song.play();
 }
 export function generateEnemyBoom(x: number, y: number) {
     // radius = 9
@@ -33,18 +39,22 @@ export function generateEnemyBoom(x: number, y: number) {
 
     }
     booms.push(boom)
+    var song = new Audio();
+    song.src = '../data/soundBoom.mp3';
+    song.volume = volume ? 0.5 : 0
+    song.play();
 }
+
 export function drawBooms() {
     booms.forEach(element => {
+
         if (element.rise) element.actualSize += 1 / 8
         else element.actualSize -= 1 / 8
         if (element.actualSize == element.size) element.rise = false
         if (element.actualSize == 0) element.alive = false
 
-        let colors: Array<string> = ["white", "#fff1c9", "#fec9ff", "#c9d2ff", "#c9d2ff"]
+        let colors: Array<string> = ["white", "#fff1c9", "#fec9ff", "#c9d2ff", "#c9d2ff", "#e86666", "#667ae8"]
         ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]
-
-        // !!! dziala jako tako !!!
         for (let i = -element.actualSize; i <= element.actualSize; i++) {
             let yValue: number = Math.sqrt(Math.pow(element.actualSize, 2) - Math.pow(i, 2)) * pixelSize
             for (let j = 0; j <= yValue; j++) {
@@ -60,6 +70,7 @@ export function drawBooms() {
             let dist: number = distnceFromStartToTarget(element.x, element.y, missile.currentX, missile.currentY)
             if (dist < element.actualSize * pixelSize) {
                 missile.alive = false
+                generateEnemyBoom(missile.currentX, missile.currentY)
                 if (!element.enemy) addPoints(25)
             }
 
@@ -70,6 +81,7 @@ export function drawBooms() {
             else dist = distnceFromStartToTarget(element.x, element.y, plane.currentX - 4 * pixelSize, plane.y)
             if (dist < element.actualSize * pixelSize) {
                 plane.alive = false
+                generateEnemyBoom(plane.currentX, plane.y)
                 if (!element.enemy) addPoints(100)
             }
         });
@@ -79,16 +91,18 @@ export function drawBooms() {
             else dist = distnceFromStartToTarget(element.x, element.y, UFO.currentX - 4 * pixelSize, UFO.currentY)
             if (dist < element.actualSize * pixelSize) {
                 UFO.alive = false
+                generateEnemyBoom(UFO.currentX, UFO.currentY)
                 if (!element.enemy) addPoints(100)
             }
         });
         triangles.forEach(triangle => {
             let dist: number = distnceFromStartToTarget(element.x, element.y, triangle.currentX, triangle.currentY)
-            if (dist < 3 * pixelSize) {
+            if (dist < 2.5 * pixelSize) {
                 triangle.alive = false
+                generateEnemyBoom(triangle.currentX, triangle.currentY)
                 if (!element.enemy) addPoints(125)
             }
-            else if (dist < (element.actualSize + 2) * pixelSize) {
+            else if (dist < (element.actualSize + 1) * pixelSize) {
                 let angle: number = angleFromStartToTarget(element.x, element.y, triangle.currentX, triangle.currentY)
                 triangle.currentX += (triangleSpeed * 3) * Math.sin(angle)
                 triangle.currentY += (triangleSpeed * 3) * -Math.cos(angle)

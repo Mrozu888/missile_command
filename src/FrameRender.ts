@@ -1,5 +1,5 @@
 import { root } from './Main';
-import { drawBooms, generateEnemyBoom } from './Boom';
+import { booms, clearBooms, drawBooms, generateEnemyBoom } from './Boom';
 import { createRocket, drawRocketOnSilos, drawRockets, drawRocketSil, resetRockets, usedRockets } from './Rocket';
 import { drawTriggers } from './Trigger';
 import { createMissile, drawMissiles } from './Missile';
@@ -9,7 +9,7 @@ import { createWorld, drawRemoved } from './World';
 import { City } from './City';
 import { getRandomInt } from './DefaultFunctions';
 import { Missile, Rocket, Trigger, Triangle, Plane, UFO } from "./Interfaces";
-import { addPoints, drawGameOver, drawMultipler, drawScore, drawStart, multiplier, score, setMultiplier } from './Scoreboard';
+import { addPoints, drawGameOver, drawHighScore, drawMultipler, drawScore, drawStart, multiplier, resetScore, score, setHighScore, setMultiplier } from './Scoreboard';
 
 export const canvas: HTMLCanvasElement = document.createElement("canvas")
 canvas.width = 1288
@@ -18,9 +18,12 @@ export const ctx = canvas.getContext('2d');
 
 export const init = () => root.appendChild(canvas)
 
-const FPS = 50;
+//audio
+export let volume = true
+
+const FPS = 40;
 let fpsInterval: number
-let time: number = 0
+export let time: number = 0
 let now: number
 let then: number
 let end: boolean = false
@@ -53,12 +56,26 @@ export let rockets: Array<Rocket> = []
 export const rocketSpeed: number = 24;
 export let triggers: Array<Trigger> = []
 export let missiles: Array<Missile> = []
-export let missileSpeed: number = 3
+export let missileSpeed: number = 1
 export let planes: Array<Plane> = []
 export let UFOs: Array<UFO> = []
 export let triangles: Array<Triangle> = []
-export let triangleSpeed: number = 3
+export let triangleSpeed: number = 1.5
 
+let volumeIcon = document.getElementById("volume") as HTMLImageElement
+volumeIcon.onclick = () => {
+    if (volume) {
+        volume = !volume
+        volumeIcon.src = "./data/mute.png"
+    }
+    else {
+        volume = !volume
+        volumeIcon.src = "./data/volume.png"
+    }
+}
+
+
+let showStart = true
 function crossHair(x: number, y: number) {
     var rect = canvas.getBoundingClientRect();
     x = x - Math.floor(rect.x) - 10
@@ -72,17 +89,57 @@ function crossHair(x: number, y: number) {
     ctx.fillRect(x, y - pixelSize, pixelSize, pixelSize);
     ctx.fillRect(x, y + pixelSize, pixelSize, pixelSize);
 }
-canvas.addEventListener('mousemove', function (event) {
-    mouse = { x: event.clientX, y: event.clientY }
-
-})
 let startGame: boolean = false
-canvas.addEventListener('click', function (event) {
-    if (!end && startGame) createRocket()
-    if (!startGame) levels()
-    startGame = true
+let triggerSpeed: number = 8
+let map: Array<Object> = [{}]; // You could also use an array
+document.onkeydown = document.onkeyup = function (e: any) {
+    e = e || event; // to deal with IE
+    map[e.keyCode] = e.type == 'keydown';
+    if (e.keyCode == 17 && e.type == 'keydown') {
+        if (!end && startGame) createRocket()
+    }
+    if (e.keyCode == 13 && e.type == 'keydown') {
+        showStart = false
+        if (!startGame) {
+            reset()
+            levels()
 
-})
+        }
+        startGame = true
+        end = false
+    }
+}
+
+function moveTrigger() {
+    var rect = canvas.getBoundingClientRect();
+    let width = canvas.width + Math.floor(rect.x) + 10 - 2 * pixelSize
+    let height = canvas.height + Math.floor(rect.x) + 10 - 20 * pixelSize
+    if (map[38] && map[37]) { // UP+LEFT
+        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+    } else if (map[38] && map[39]) { // UP+RIGHT
+        if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
+        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+    } else if (map[40] && map[37]) { // DOWN+LEFT
+        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+        if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
+    } else if (map[40] && map[39]) { // DOWN+RIGHT
+        if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
+        if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
+
+    } else if (map[38]) { // UP
+        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+    } else if (map[40]) { // DOWN
+        if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
+    } else if (map[37]) { // LEFT
+        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+    } else if (map[39]) { // RIGHT
+        if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
+    }
+}
+
+
+
 
 
 let worldColors = [{
@@ -137,21 +194,20 @@ export function destroySilo() {
 export let levelFinished: boolean = false
 let lastRockets: Array<number> = []
 let drawMul: boolean = false
-let finishTime: number
 let cityN = 0
 let rockety = 0
 let rocketsX = 104
 function draw() {
-    createWorld(cityColor, worldColor, airColor)
-    if (!startGame) {
-        drawStart(160, canvas.height / 2 - 5 * pixelSize)
-    }
+    moveTrigger()
+    createWorld()
     started = true
     drawRemoved()
     drawScore()
+    drawHighScore()
     if (checkCities() == 0) {
         end = true
         drawGameOver(320, canvas.height / 2 - 5 * pixelSize)
+        startGame = false
     }
     else {
         if (drawMul) drawMultipler(504, canvas.height / 2 - 5 * pixelSize)
@@ -164,19 +220,20 @@ function draw() {
         drawTriangle()
         drawBooms()
         if (levelFinished) {
-
-
-            if (rockety > 0 && time % 4 == 0) {
+            if (rockety > 0 && time % 5 == 0) {
                 lastRockets.push(rocketsX)
                 rocketsX += 4 * pixelSize
-
+                addPoints(5)
                 rockety--
             }
-            if (cities[cityN].alive && !cities[cityN].survived) {
-                cities[cityN].survived = true
 
-            }
-            if (time % 20 == 0 && cityN < cities.length - 1) {
+
+            if (time % 20 == 0) {
+
+                if (cities[cityN]?.alive) {
+                    cities[cityN].survived = true
+                    addPoints(100)
+                }
                 cityN++
 
             }
@@ -197,7 +254,9 @@ function draw() {
 
     clearDeadObjects()
     crossHair(mouse.x, mouse.y)
-
+    if (showStart) {
+        drawStart()
+    }
 }
 
 function clearDeadObjects() {
@@ -210,83 +269,107 @@ function clearDeadObjects() {
 }
 let actualLevel = 1
 function finishLevel() {
-    finishTime = time
     let x = () => setTimeout(() => {
         if (missiles.length == 0 && planes.length == 0 && UFOs.length == 0 && triangles.length == 0) {
             rockety = rocketsCount - usedRockets
             rocketsX = 104
             cityN = 0
             levelFinished = true
-            addPoints(5 * rockety)
-            cities.forEach(element => {
-                if (element.alive) addPoints(100)
-            });
             setTimeout(() => {
-                let colors = worldColors[Math.floor(Math.random() * worldColors.length)]
-                cityColor = colors.cityColor
-                worldColor = colors.worldColor
-                airColor = colors.airColor
-                enemyObjectsColor = colors.enemyObjectsColor
-                numbersColor = colors.numbersColor
                 drawMul = true
-                lastRockets = []
-                cities = []
                 levelFinished = false
                 resetRockets()
-
-                started = false
                 end = false
+                var song = new Audio();
+                song.src = '../data/soundBefore.mp3';
+                song.volume = volume ? 0.5 : 0
+                song.play();
                 setTimeout(() => {
+                    let colors = worldColors[Math.floor(Math.random() * worldColors.length)]
+                    cityColor = colors.cityColor
+                    worldColor = colors.worldColor
+                    airColor = colors.airColor
+                    enemyObjectsColor = colors.enemyObjectsColor
+                    numbersColor = colors.numbersColor
+
+                    lastRockets = []
                     drawMul = false
-                    missileSpeed += 1 / 4
-                    triangleSpeed += 1 / 4
+                    if (missileSpeed < 4) missileSpeed += 1 / 8
+                    if (triangleSpeed < 4) triangleSpeed += 1 / 8
+
                     actualLevel++
                     setMultiplier(Math.floor(Math.sqrt(actualLevel)))
                     time = 0
 
-
+                    cities.forEach(element => {
+                        if (element.survived) {
+                            element.survived = false
+                        }
+                    });
                     levels()
-                }, 4000);
-            }, 4000);
+                }, 2000);
+            }, 4500);
         }
         else x()
     }, 100);
-
     x()
 }
 
-function levels() {
-    for (let i = 0; i < getRandomInt(0, 4); i++) createMissile()
-    for (let i = 0; i < getRandomInt(0, 4); i++) createTriangle()
-    if (getRandomInt(0, 2) < 1) {
-        createPlane()
-    } else {
-        createUFO()
-    }
 
-    let x = () => setTimeout(() => {
+
+function reset() {
+    rockets = []
+    triggers = []
+    missiles = []
+    planes = []
+    UFOs = []
+    triangles = []
+    cities = []
+    clearBooms()
+    started = false
+    missileSpeed = 1
+    triangleSpeed = 1.5
+    actualLevel = 1
+    levelFinished = false
+    setMultiplier(Math.floor(Math.sqrt(actualLevel)))
+    setHighScore(score)
+    resetScore()
+    time = 0
+    clearTimeout(y)
+}
+let y: any
+function levels() {
+    y = setTimeout(() => {
         for (let i = 0; i < getRandomInt(0, 4); i++) createMissile()
         for (let i = 0; i < getRandomInt(0, 4); i++) createTriangle()
         if (getRandomInt(0, 2) < 1) {
+            createPlane()
+        } else {
+            createUFO()
+        }
+        let x = () => setTimeout(() => {
+            for (let i = 0; i < getRandomInt(0, 4); i++) createMissile()
+            for (let i = 0; i < getRandomInt(0, 4); i++) createTriangle()
             if (getRandomInt(0, 2) < 1) {
-                createPlane()
-            } else {
-                createUFO()
+                if (getRandomInt(0, 2) < 1) {
+                    createPlane()
+                } else {
+                    createUFO()
+                }
             }
-        }
-
-
-        if (!end) {
-            if (time < 1000) {
-                x()
+            if (!end) {
+                if (time < 750) {
+                    x()
+                }
+                else {
+                    finishLevel()
+                }
             }
-            else {
-                finishLevel()
-            }
-        }
 
-    }, getRandomInt(5000, 7000));
-    x()
+        }, getRandomInt(10000, 12000));
+        x()
+
+    }, 200);
 
 
 }
@@ -298,7 +381,4 @@ function checkCities() {
     return alives
 }
 
-
-
 window.requestAnimationFrame(refreshLoop)
-

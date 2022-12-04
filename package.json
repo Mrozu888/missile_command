@@ -94,15 +94,10 @@
   },
   "scripts": {
     "start": "node server.js",
-    "postinstall": "tsc",
-    "watch-node": "nodemon dist/index.js",
-    "watch-ts": "tsc -w",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
-  "engines": {
-    "node": "12.16.3"
-  }
+  "description": ""
 }

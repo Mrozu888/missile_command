@@ -5,13 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missile Command</title>
+    <title>Document</title>
     <link href="./style.css" rel="stylesheet" />
 </head>
 
 <body>
     <div id="root"></div>
+    <img src="./data/volume.png" width="50px" id="volume">
+    <div style="display:none;">
+        <img id="source" src="./data/intro.png" width="1288" height="800" />
+        <audio controls>
+            <source id="enemyObjectSound" src="./data/planeSound.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
     <script src="./dist/script.bundle.js"></script>
+
 </body>
 
 </html>

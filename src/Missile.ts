@@ -6,7 +6,7 @@ import { removeCity } from './World';
 export function createMissile() {
     if (missiles.length < 5) {
         let missileStartX: number = Math.floor(getRandomInt(3 * pixelSize, canvas.width - 3 * pixelSize) / pixelSize) * pixelSize
-        let missileStartY: number = 0
+        let missileStartY: number = 112
 
         let missileTargetX: number = targetsX[Math.floor(Math.random() * targetsX.length)] + 5 * pixelSize
         let missileTargetY: number = Math.floor((targetsY - 3 * pixelSize) / pixelSize) * pixelSize + 1 / 2 * pixelSize

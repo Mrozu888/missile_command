@@ -1,20 +1,19 @@
-import { airColor, ctx, levelFinished, pixelSize, worldColor } from './FrameRender';
+import { airColor, ctx, levelFinished, pixelSize, worldColor, cityColor } from './FrameRender';
 export class City {
     alive: boolean
     cityX: number
     cityY: number
     color: string
     survived: boolean = false
-    constructor(x: number, y: number, color: string) {
+    constructor(x: number, y: number) {
         this.alive = true
         this.cityX = x
         this.cityY = y
-        this.color = color
     }
     drawCity() {
         if (this.alive) {
             if (!this.survived) {
-                ctx.fillStyle = this.color
+                ctx.fillStyle = cityColor;
                 ctx.fillRect(this.cityX, this.cityY, 12 * pixelSize, pixelSize)
                 ctx.fillRect(this.cityX, this.cityY - pixelSize, 11 * pixelSize, pixelSize)
                 ctx.fillRect(this.cityX + pixelSize, this.cityY - 2 * pixelSize, pixelSize, pixelSize)
@@ -28,7 +27,7 @@ export class City {
         }
     }
     destroyCity() {
-        ctx.fillStyle = this.color
+        ctx.fillStyle = cityColor
         ctx.fillRect(this.cityX, this.cityY, 2 * pixelSize, pixelSize)
         ctx.fillRect(this.cityX, this.cityY - pixelSize, pixelSize, pixelSize)
         ctx.fillRect(this.cityX + 10 * pixelSize, this.cityY, 2 * pixelSize, pixelSize)
@@ -37,7 +36,7 @@ export class City {
 
     }
     drawSurvivedCity(x: number, y: number) {
-        ctx.fillStyle = this.color
+        ctx.fillStyle = cityColor
         ctx.fillRect(x, y, 12 * pixelSize, pixelSize)
         ctx.fillRect(x, y - pixelSize, 11 * pixelSize, pixelSize)
         ctx.fillRect(x + pixelSize, y - 2 * pixelSize, pixelSize, pixelSize)

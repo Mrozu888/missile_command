@@ -1,4 +1,4 @@
-import { ctx, canvas, mouse, triggers, startMissileX, startMissileY, missileSpeed, rockets, pixelSize, rocketSpeed, rocketsCount, siloIsAlive, cityColor } from './FrameRender'
+import { ctx, canvas, mouse, triggers, startMissileX, startMissileY, missileSpeed, rockets, pixelSize, rocketSpeed, rocketsCount, siloIsAlive, cityColor, time, volume } from './FrameRender'
 import { generateUserBoom } from './Boom';
 import { angleFromStartToTarget, filterPath } from './DefaultFunctions';
 import { Rocket } from './Interfaces';
@@ -89,6 +89,11 @@ export function drawRocketSil(xV: number, yV: number) {
 
 export function drawRockets() {
     rockets.forEach(element => {
+        var song = new Audio();
+        song.src = '../data/soundRocket.mp3';
+        song.volume = volume ? 0.5 : 0
+        if (time % 9 == 0) song.play();
+
         for (let index = 0; index < Math.ceil(rocketSpeed / pixelSize); index++) {
             element.currentX += rocketSpeed / Math.ceil(rocketSpeed / pixelSize) * Math.sin(element.angle)
             element.currentY += rocketSpeed / Math.ceil(rocketSpeed / pixelSize) * -Math.cos(element.angle)

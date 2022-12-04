@@ -1,10 +1,14 @@
-import { ctx, canvas, triggers, cityColor, planes, UFOs, triangles, enemyObjectsColor, pixelSize } from './FrameRender';
+import { ctx, canvas, triggers, cityColor, planes, UFOs, triangles, enemyObjectsColor, pixelSize, time, volume } from './FrameRender';
 import { createPlaneMissile, drawMissiles } from './Missile';
 import { getRandomInt } from "./DefaultFunctions";
 
 
 function drawLeftPlane(xVal: number, yVal: number) {
-    let x: number = Math.round(xVal / pixelSize) * pixelSize
+    var song = new Audio();
+    song.src = '../data/planeSound.mp3';
+    song.volume = volume ? 0.5 : 0
+    if (time % 9 == 0) song.play();
+    let x: number = Math.round(xVal / pixelSize) * pixelSize + 5 * pixelSize
     let y: number = Math.round(yVal / pixelSize) * pixelSize
     ctx.fillStyle = enemyObjectsColor
     ctx.fillRect(x, y, 8 * pixelSize, pixelSize);
@@ -17,7 +21,12 @@ function drawLeftPlane(xVal: number, yVal: number) {
     ctx.fillRect(x + 7 * pixelSize, y - pixelSize, pixelSize, pixelSize);
 }
 function drawRightPlane(xVal: number, yVal: number) {
-    let x: number = Math.round(xVal / pixelSize) * pixelSize
+    var song = new Audio();
+    song.src = '../data/planeSound.mp3';
+    song.volume = volume ? 0.5 : 0
+
+    if (time % 9 == 0) song.play();
+    let x: number = Math.round(xVal / pixelSize) * pixelSize - 5 * pixelSize
     let y: number = Math.round(yVal / pixelSize) * pixelSize
     ctx.fillStyle = enemyObjectsColor
     ctx.fillRect(x, y, 8 * pixelSize, pixelSize);
@@ -35,12 +44,12 @@ export function drawPlane() {
     planes.forEach(element => {
         if (element.leftDir) {
             drawLeftPlane(element.currentX, element.y)
-            element.currentX += - 4
+            element.currentX += - 1
             if (element.currentX < 0) element.alive = false
         }
         else {
             drawRightPlane(element.currentX, element.y)
-            element.currentX += + 4
+            element.currentX += +1
             if (element.currentX > canvas.width) element.alive = false
         }
         if (element.xMissiles.includes(element.currentX)) createPlaneMissile(element.currentX, element.y)
@@ -58,14 +67,14 @@ export function createPlane() {
         if (getRandomInt(0, 2) < 1) planes.push({
             leftDir: true,
             currentX: canvas.width,
-            y: Math.round(getRandomInt(100, 400) / pixelSize) * pixelSize,
+            y: Math.round(getRandomInt(120, 400) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
         else planes.push({
             leftDir: false,
             currentX: 0,
-            y: Math.round(getRandomInt(100, 400) / pixelSize) * pixelSize,
+            y: Math.round(getRandomInt(120, 400) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
@@ -81,21 +90,27 @@ export function createUFO() {
         if (getRandomInt(0, 2) < 1) UFOs.push({
             leftDir: true,
             currentX: canvas.width,
-            currentY: Math.round(getRandomInt(100, 200) / pixelSize) * pixelSize,
+            currentY: Math.round(getRandomInt(120, 200) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
         else UFOs.push({
             leftDir: false,
             currentX: 0,
-            currentY: Math.round(getRandomInt(100, 200) / pixelSize) * pixelSize,
+            currentY: Math.round(getRandomInt(120, 200) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
     }
 }
 export function drawUFO() {
+
     UFOs.forEach(element => {
+        var song = new Audio();
+        song.src = '../data/planeSound.mp3';
+        song.volume = volume ? 0.5 : 0
+
+        if (time % 9 == 0) song.play();
         let x: number = Math.round(element.currentX / pixelSize) * pixelSize
         let y: number = Math.round(element.currentY / pixelSize) * pixelSize
         ctx.fillStyle = enemyObjectsColor
@@ -114,11 +129,11 @@ export function drawUFO() {
         ctx.fillRect(x - 4 * pixelSize, y + 3 * pixelSize, pixelSize, pixelSize);
         ctx.fillRect(x + 3 * pixelSize, y + 3 * pixelSize, pixelSize, pixelSize);
         if (element.leftDir) {
-            element.currentX += - 3
+            element.currentX += - 1
             if (element.currentX < 0) element.alive = false
         }
         else {
-            element.currentX += 3
+            element.currentX += 1
             if (element.currentX > canvas.width) element.alive = false
         }
         if (getRandomInt(0, 300) < 2) createPlaneMissile(element.currentX, element.currentY)

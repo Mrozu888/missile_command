@@ -1,28 +1,20 @@
 import { generateEnemyBoom } from "./Boom";
 import { City } from "./City";
-import { ctx, canvas, pixelSize, targetsX, cities, started, siloIsAlive, targetsY } from './FrameRender';
+import { ctx, canvas, pixelSize, targetsX, cities, started, siloIsAlive, targetsY, cityColor, worldColor, airColor } from './FrameRender';
 import { drawRocketOnSilos } from "./Rocket";
 
-
-let citiesColor: string
-let worldColor: string
-let airColor: string
-
-export function createWorld(cc: string, wc: string, ac: string) {
-    citiesColor = cc
-    worldColor = wc
-    airColor = ac
+export function createWorld() {
     drawAir()
     drawGround()
     drawSilo()
 
     if (!started) {
-        cities.push(new City(13 * pixelSize, targetsY, citiesColor))
-        cities.push(new City(32 * pixelSize, targetsY, citiesColor))
-        cities.push(new City(51 * pixelSize, targetsY, citiesColor))
-        cities.push(new City(98 * pixelSize, targetsY, citiesColor))
-        cities.push(new City(117 * pixelSize, targetsY, citiesColor))
-        cities.push(new City(136 * pixelSize, targetsY, citiesColor))
+        cities.push(new City(13 * pixelSize, targetsY))
+        cities.push(new City(32 * pixelSize, targetsY))
+        cities.push(new City(51 * pixelSize, targetsY))
+        cities.push(new City(98 * pixelSize, targetsY))
+        cities.push(new City(117 * pixelSize, targetsY))
+        cities.push(new City(136 * pixelSize, targetsY))
     }
     cities.forEach(el => el.drawCity())
 }

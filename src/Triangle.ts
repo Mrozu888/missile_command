@@ -6,9 +6,9 @@ export function createTriangle() {
         let trinagleStartX: number = Math.floor(getRandomInt(3 * pixelSize, canvas.width - 3 * pixelSize) / pixelSize) * pixelSize
         triangles.push({
             startX: trinagleStartX,
-            startY: 0,
+            startY: 112,
             currentX: trinagleStartX,
-            currentY: 0,
+            currentY: 112,
             targetX: targetsX[Math.floor(Math.random() * targetsX.length)] + 5 * pixelSize,
             targetY: Math.floor((targetsY - 3 * pixelSize) / pixelSize) * pixelSize + 1 / 2 * pixelSize,
             alive: true
