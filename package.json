@@ -6,7 +6,7 @@
     "webpack-cli": "^4.10.0"
   },
   "engines": {
-    "node": "12.16.3"
+    "node": "16.13.0"
   },
   "name": "missile-command",
   "version": "1.0.0",
