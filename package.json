@@ -96,9 +96,9 @@
     "wildcard": "^2.0.0"
   },
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node server.js",
     "postinstall": "tsc",
-    "watch-node": "nodemon dist/index.js",
+    "watch-node": "nodemon server.js",
     "watch-ts": "tsc -w",
     "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
