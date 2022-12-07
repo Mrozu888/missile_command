@@ -342,8 +342,8 @@ function reset() {
 let y: any
 function levels() {
     y = setTimeout(() => {
-        for (let i = 0; i < getRandomInt(0, 4); i++) createMissile()
-        for (let i = 0; i < getRandomInt(0, 4); i++) createTriangle()
+        for (let i = 0; i < getRandomInt(0, 3); i++) createMissile()
+        for (let i = 0; i < getRandomInt(0, 3); i++) createTriangle()
         if (getRandomInt(0, 2) < 1) {
             createPlane()
         } else {
