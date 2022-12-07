@@ -98,7 +98,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "webpack --mode production",
-    "postinstall": "npm run build",
+    "postinstall": "tsc",
     "watch-node": "nodemon server.js",
     "watch-ts": "tsc -w",
     "deploy": "git add . && git commit -m Heroku && git push heroku master",
