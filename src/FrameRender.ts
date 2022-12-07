@@ -103,7 +103,6 @@ document.onkeydown = document.onkeyup = function (e: any) {
         if (!startGame) {
             reset()
             levels()
-
         }
         startGame = true
         end = false
@@ -113,26 +112,29 @@ document.onkeydown = document.onkeyup = function (e: any) {
 function moveTrigger() {
     var rect = canvas.getBoundingClientRect();
     let width = canvas.width + Math.floor(rect.x) + 10 - 2 * pixelSize
-    let height = canvas.height + Math.floor(rect.x) + 10 - 20 * pixelSize
+    let height = canvas.height + Math.floor(rect.y) + 10 - 12 * pixelSize
+    let minWidth = Math.floor(rect.x) + 24
+    let minHeight = Math.floor(rect.y) + 24
+
     if (map[38] && map[37]) { // UP+LEFT
-        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
-        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+        if (mouse.x > minWidth) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+        if (mouse.y > minHeight) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
     } else if (map[38] && map[39]) { // UP+RIGHT
         if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
-        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+        if (mouse.y > minHeight) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
     } else if (map[40] && map[37]) { // DOWN+LEFT
-        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+        if (mouse.x > minWidth) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
         if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
     } else if (map[40] && map[39]) { // DOWN+RIGHT
         if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
         if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
 
     } else if (map[38]) { // UP
-        if (mouse.y > 196) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
+        if (mouse.y > minHeight) mouse = { x: mouse.x, y: mouse.y - triggerSpeed }
     } else if (map[40]) { // DOWN
         if (mouse.y < height) mouse = { x: mouse.x, y: mouse.y + triggerSpeed }
     } else if (map[37]) { // LEFT
-        if (mouse.x > 136) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
+        if (mouse.x > minWidth) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
     } else if (map[39]) { // RIGHT
         if (mouse.x < width) mouse = { x: mouse.x + triggerSpeed, y: mouse.y }
     }
@@ -350,7 +352,7 @@ function levels() {
         let x = () => setTimeout(() => {
             for (let i = 0; i < getRandomInt(0, 4); i++) createMissile()
             for (let i = 0; i < getRandomInt(0, 4); i++) createTriangle()
-            if (getRandomInt(0, 2) < 1) {
+            if (getRandomInt(0, 3) < 1) {
                 if (getRandomInt(0, 2) < 1) {
                     createPlane()
                 } else {

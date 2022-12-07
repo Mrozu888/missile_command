@@ -8,7 +8,7 @@ function drawLeftPlane(xVal: number, yVal: number) {
     song.src = '../data/planeSound.mp3';
     song.volume = volume ? 0.5 : 0
     if (time % 9 == 0) song.play();
-    let x: number = Math.round(xVal / pixelSize) * pixelSize + 5 * pixelSize
+    let x: number = Math.round(xVal / pixelSize) * pixelSize - 5 * pixelSize
     let y: number = Math.round(yVal / pixelSize) * pixelSize
     ctx.fillStyle = enemyObjectsColor
     ctx.fillRect(x, y, 8 * pixelSize, pixelSize);
@@ -67,14 +67,14 @@ export function createPlane() {
         if (getRandomInt(0, 2) < 1) planes.push({
             leftDir: true,
             currentX: canvas.width,
-            y: Math.round(getRandomInt(120, 400) / pixelSize) * pixelSize,
+            y: Math.round(getRandomInt(128, 400) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
         else planes.push({
             leftDir: false,
             currentX: 0,
-            y: Math.round(getRandomInt(120, 400) / pixelSize) * pixelSize,
+            y: Math.round(getRandomInt(128, 400) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })
@@ -90,7 +90,7 @@ export function createUFO() {
         if (getRandomInt(0, 2) < 1) UFOs.push({
             leftDir: true,
             currentX: canvas.width,
-            currentY: Math.round(getRandomInt(120, 200) / pixelSize) * pixelSize,
+            currentY: Math.round(getRandomInt(128, 200) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })

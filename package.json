@@ -100,7 +100,8 @@
     "postinstall": "tsc",
     "watch-node": "nodemon server.js",
     "watch-ts": "tsc -w",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "deploy": "git add . && git commit -m Heroku && git push heroku master",
+    "dev": "webpack --mode development"
   },
   "author": "",
   "license": "ISC",
