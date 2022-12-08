@@ -97,7 +97,7 @@ export function createUFO() {
         else UFOs.push({
             leftDir: false,
             currentX: 0,
-            currentY: Math.round(getRandomInt(120, 200) / pixelSize) * pixelSize,
+            currentY: Math.round(getRandomInt(128, 200) / pixelSize) * pixelSize,
             alive: true,
             xMissiles: arr
         })

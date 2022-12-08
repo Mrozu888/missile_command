@@ -114,7 +114,7 @@ function moveTrigger() {
     let width = canvas.width + Math.floor(rect.x) + 10 - 2 * pixelSize
     let height = canvas.height + Math.floor(rect.y) + 10 - 12 * pixelSize
     let minWidth = Math.floor(rect.x) + 24
-    let minHeight = Math.floor(rect.y) + 24
+    let minHeight = Math.floor(rect.y) + 24 + 112
 
     if (map[38] && map[37]) { // UP+LEFT
         if (mouse.x > minWidth) mouse = { x: mouse.x - triggerSpeed, y: mouse.y }
