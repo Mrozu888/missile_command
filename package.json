@@ -101,7 +101,8 @@
     "watch-node": "nodemon server.js",
     "watch-ts": "tsc -w",
     "deploy": "git add . && git commit -m Heroku && git push heroku master",
-    "dev": "webpack --mode development"
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",
